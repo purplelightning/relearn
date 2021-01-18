@@ -5,9 +5,16 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var usersRouter = require('./routes/mongoose/user');
 
 var app = express();
+
+// 允许前端跨域
+app.all('*', (req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:8855");
+
+  next()
+})
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -38,4 +45,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+
+process.env.PORT = 2080;
 module.exports = app;

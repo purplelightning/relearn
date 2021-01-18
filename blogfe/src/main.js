@@ -6,6 +6,11 @@ import router from './router'
 
 Vue.config.productionTip = false
 
+// 开发跨域
+import axios from 'axios'
+axios.defaults.baseURL = 'http://localhost:2080'
+Vue.prototype.$http = axios
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
