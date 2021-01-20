@@ -1,5 +1,32 @@
-var express = require('express');
-var router = express.Router();
+const mongoose = require('mongoose')
+
+UserSchema = new mongoose.Schema({
+  name: {
+    type: String, required: true
+  },
+  password: {
+    type:String, required: true
+  },
+  avatar: {
+    type: String, required: true
+  },
+  gender: {
+    type: String, enum: ['m', 'f', 'x'], default: 'x'
+  },
+  bio: {
+    type: String, required: true
+  },
+  phone: {
+    type: Number, required: false
+  },
+
+})
+
+let UserModel = mongoose.model('user', UserSchema)
+let User = UserModel
+
+let express = require('express');
+let router = express.Router();
 
 const checkNotLogin = require('../../middlewares/check').checkNotLogin
 const checkLogin = require('../../middlewares/check').checkLogin
@@ -11,19 +38,19 @@ router.get('/info', function (req, res, next) {
   res.end(JSON.stringify(obj));
 });
 
-router.get('/signin', checkNotLogin, (req, res, next) => {
+router.get('/login', checkNotLogin, (req, res, next) => {
   res.send('登录页')
 })
 
-router.post('/signin', checkNotLogin, (req, res, next) => {
+router.post('/login', checkNotLogin, (req, res, next) => {
   res.send('登录')
 })
 
-router.get('/signup', checkNotLogin, (req, res, next) => {
+router.get('/register', checkNotLogin, (req, res, next) => {
   res.send('注册页')
 })
 
-router.post('/signup', checkNotLogin, (req, res, next) => {
+router.post('/register', checkNotLogin, (req, res, next) => {
   res.send('注册')
 })
 
