@@ -6,6 +6,10 @@ import router from './router'
 
 Vue.config.productionTip = false
 
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+Vue.use(ElementUI)
+
 // 开发跨域
 import axios from 'axios'
 axios.defaults.baseURL = 'http://localhost:2080'

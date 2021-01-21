@@ -37,11 +37,26 @@ app.use(session({
 // flash 中间件，用来显示通知
 app.use(flash())
 
+// 处理表单及文件上传的中间件
+// app.use(require('express-formidable')({
+//   uploadDir: path.join(__dirname, 'public/img'), // 上传文件目录
+//   keepExtensions: true// 保留后缀
+// }))
+
 // 允许前端跨域
 app.all('*', (req, res, next) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:8855");
+  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Credentials', true);
   next()
 })
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -50,7 +65,7 @@ app.use(cookieParser());
 
 // 路由
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/user', usersRouter);
 app.use('/posts', postRouter)
 app.use('/comment', commentRouter)
 
