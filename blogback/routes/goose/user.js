@@ -11,7 +11,7 @@ UserSchema = new mongoose.Schema({
     type: String, required: true
   },
   gender: {
-    type: String, enum: ['m', 'f', 'x'], default: 'x'
+    type: String, required: true
   },
   bio: {
     type: String, required: true
@@ -27,14 +27,17 @@ let User = UserModel
 
 let express = require('express');
 let router = express.Router();
-const checkNotLogin = require('../../middlewares/check').checkNotLogin
-const checkLogin = require('../../middlewares/check').checkLogin
 
 const fs = require('fs')
 const path = require('path')
 const sha1 =require('sha1')
 var multer =require('multer')
 var avatarUpload = multer({dest: 'public/avatar/'})
+
+
+const errReturn = JSON.stringify({
+  err: '请求失败'
+})
 
 
 router.get('/info', function (req, res, next) {
@@ -44,55 +47,76 @@ router.get('/info', function (req, res, next) {
   res.end(JSON.stringify(obj));
 });
 
-router.get('/login', checkNotLogin, (req, res, next) => {
-  res.send('登录页')
-})
 
-router.post('/login', checkNotLogin, (req, res, next) => {
-  res.send('登录')
-})
-
-router.get('/register', checkNotLogin, (req, res, next) => {
+router.get('/register', (req, res, next) => {
   // res.send('注册页')
 })
 
-router.post('/register', checkNotLogin, avatarUpload.single('avatar'), (req, res, next) => {
+router.post('/register', (req, res, next) => {
   res.writeHead(200, {
     'Content-Type': 'text/html; charset=utf-8'
   });
   console.log(req.body)
-  console.log(req.file)
-  console.log(req.body.avatar)
-  console.log(req.body.avatar.file)
   User.find({name: req.body.name}, (err, docs)=>{
     if(err){
-      console.log(err)
-      return
+      res.end(errReturn)
     }
     if(docs.length){
       res.end('{"err":"该用户名已注册"}')
     }else{
       let pwd = sha1(req.body.password)
-      let avatar = req.file
-      console.log(req.body)
-
-
       let temp = new User({
         name: req.body.name,
         password: pwd,
-        gender: req.body.gedner,
+        gender: req.body.gender,
         bio: req.body.bio,
-        avatar: avatar
+        avatar: 'tree.jpg' //默认头像
       })
+      temp.save((err, doc) =>{
+        if(err){
+          console.log(err)
+          res.end(errReturn)
+        }
+        let str = '用户' + req.body.name + '注册成功';
+        let oo = {
+          msg: str,
+          code: 200
+        }
+        res.end(JSON.stringify(oo))
+      })
+
     }
   })
-
-  let oo = { name: '注册', msg: '注册成功'}
-  res.end(JSON.stringify(oo))
 })
 
-router.get('/signout', checkLogin, (req, res, next) => {
-  res.send('登出')
+router.post('/login', (req, res, next) => {
+  res.writeHead(200, {
+    'Content-Type': 'text/html; charset=utf-8'
+  });
+  if(!req.body.name || !req.body.password){
+    res.end('{"err":"请输入用户名和密码"}')
+  }
+  User.find({name: req.body.name}, (err,docs)=>{
+    if(err){
+      console.log(err)
+    }else{
+      if(!docs.length){
+        res.end('{"err":"该用户名未注册"}')
+      }else if(docs[0].password !== sha1(req.body.password)){
+        res.end('{"err":"密码错误"}')
+      }else{
+        req.session.name = req.body.name
+        req.session.password = sha1(req.body.password)
+        res.end('{"msg":"登录成功", "code": 200}')
+      }
+    }
+  })
+})
+
+router.get('/logout', (req, res, next) => {
+  req.session.name = ''
+  req.session.password = ''
+  res.end('{"msg":"退出登录", "code": 200}')
 })
 
 module.exports = router;

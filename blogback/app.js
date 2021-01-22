@@ -34,6 +34,21 @@ app.use(session({
   })
 }))
 
+//验证用户登录
+app.use(function(req, res, next){
+  //后台请求
+  if(req.session.name){ //表示已经登录后台
+    next()
+  }else if(req.url.indexOf("login") >=0 || req.url.indexOf("logout") >= 0 || req.url.indexOf("register") >= 0){
+    //登入，登出不需要登录
+    next();
+  }else{
+    //next(); //TODO:这里是调试的时候打开的，以后需要删掉
+    res.end('{"redirect":"true"}');
+  }
+  next()
+})
+
 // flash 中间件，用来显示通知
 app.use(flash())
 

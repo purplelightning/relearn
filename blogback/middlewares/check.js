@@ -1,4 +1,4 @@
-module.exports = {
+module.exports = { // 这里的权限控制是在Node端写页面才能用的，前后端分离的情况下需要在前端控制页面
   checkLogin: function checkLogin (req, res, next) {
     if (!req.session.user) {
       req.flash('error', '未登录')
