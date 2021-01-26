@@ -48,15 +48,10 @@ router.get('/info', function (req, res, next) {
 });
 
 
-router.get('/register', (req, res, next) => {
-  // res.send('注册页')
-})
-
 router.post('/register', (req, res, next) => {
   res.writeHead(200, {
     'Content-Type': 'text/html; charset=utf-8'
   });
-  console.log(req.body)
   User.find({name: req.body.name}, (err, docs)=>{
     if(err){
       res.end(errReturn)
@@ -105,7 +100,7 @@ router.post('/login', (req, res, next) => {
       }else if(docs[0].password !== sha1(req.body.password)){
         res.end('{"err":"密码错误"}')
       }else{
-        req.session.name = req.body.name
+        req.session.username = req.body.name
         req.session.password = sha1(req.body.password)
         res.end('{"msg":"登录成功", "code": 200}')
       }
@@ -114,9 +109,12 @@ router.post('/login', (req, res, next) => {
 })
 
 router.get('/logout', (req, res, next) => {
-  req.session.name = ''
+  res.writeHead(200, {
+    'Content-Type': 'text/html; charset=utf-8'
+  });
+  req.session.username = ''
   req.session.password = ''
-  res.end('{"msg":"退出登录", "code": 200}')
+  res.end('{"msg":"退出登录成功~", "code": 200}')
 })
 
 module.exports = router;

@@ -34,30 +34,6 @@ app.use(session({
   })
 }))
 
-//验证用户登录
-app.use(function(req, res, next){
-  //后台请求
-  if(req.session.name){ //表示已经登录后台
-    next()
-  }else if(req.url.indexOf("login") >=0 || req.url.indexOf("logout") >= 0 || req.url.indexOf("register") >= 0){
-    //登入，登出不需要登录
-    next();
-  }else{
-    //next(); //TODO:这里是调试的时候打开的，以后需要删掉
-    res.end('{"redirect":"true"}');
-  }
-  next()
-})
-
-// flash 中间件，用来显示通知
-app.use(flash())
-
-// 处理表单及文件上传的中间件
-// app.use(require('express-formidable')({
-//   uploadDir: path.join(__dirname, 'public/img'), // 上传文件目录
-//   keepExtensions: true// 保留后缀
-// }))
-
 // 允许前端跨域
 app.all('*', (req, res, next) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:8855");
@@ -67,6 +43,31 @@ app.all('*', (req, res, next) => {
   res.header('Access-Control-Allow-Credentials', true);
   next()
 })
+
+//验证用户登录   这个要写在允许跨域后面，否则中断后会导致跨域问题
+app.use(function(req, res, next){
+  //后台请求
+  if(req.session.username){ //表示已经登录后台
+    next()
+  }else if(req.url.indexOf("login") >=0 || req.url.indexOf("logout") >= 0 || req.url.indexOf("register") >= 0){
+    //登入，登出不需要登录
+    next();
+  }else{
+    //next(); //TODO:这里是调试的时候打开的，以后需要删掉
+    res.end('{"redirect":"true"}');
+  }
+})
+
+// flash 中间件，用来显示通知
+// app.use(flash())
+
+// 处理表单及文件上传的中间件
+// app.use(require('express-formidable')({
+//   uploadDir: path.join(__dirname, 'public/img'), // 上传文件目录
+//   keepExtensions: true// 保留后缀
+// }))
+
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

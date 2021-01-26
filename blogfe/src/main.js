@@ -12,8 +12,17 @@ Vue.use(ElementUI)
 
 // 开发跨域
 import axios from 'axios'
+axios.defaults.withCredentials=true;
+
 axios.defaults.baseURL = 'http://localhost:2080'
 Vue.prototype.$http = axios
+
+Vue.prototype.$msg = (type, msg) => {
+  Vue.prototype.$message({
+    type: type,
+    message: msg
+  })
+}
 
 // 请求拦截
 axios.interceptors.request.use(config =>{
@@ -23,16 +32,19 @@ axios.interceptors.request.use(config =>{
 })
 // 响应拦截
 axios.interceptors.response.use( res=>{
-  if(res.data.err){
-    return Promise.reject(err)
+  console.log(res)
+  if(res.data&&res.data.err){
+    Vue.prototype.$msg('error', res.data.err)
+    return Promise.reject(res.data.err)
   }else if(res.data.redirect){
-    alert('需要登录')
+    Vue.prototype.$msg('warning', '需要登录')
     window.location.href = "#/" //跳转到登录页
     return Promise.reject(res)
   }else{
     return res
   }
 },err =>{
+  console.log(err)
   return Promise.reject(err)
 })
 

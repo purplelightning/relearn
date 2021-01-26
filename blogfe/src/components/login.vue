@@ -31,8 +31,8 @@ export default {
     }
   },
   created(){
-    this.$http.get('/user/info').then(res=>{
-    })
+    // this.$http.get('/user/info').then(res=>{
+    // })
     
   },
   methods:{
@@ -40,7 +40,8 @@ export default {
       this.$http.post('/user/login', this.form).then(res => {
         console.log(res.data)
         if(res.data.code === 200){
-          this.$router.push('/')
+          this.$msg('success',res.data.msg)
+          this.$router.push('/test')
         }
       })
     }
