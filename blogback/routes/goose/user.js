@@ -102,7 +102,12 @@ router.post('/login', (req, res, next) => {
       }else{
         req.session.username = req.body.name
         req.session.password = sha1(req.body.password)
-        res.end('{"msg":"登录成功", "code": 200}')
+        let obj = {
+          msg: '登录成功',
+          code: 200,
+          userName: req.body.name
+        }
+        res.end(JSON.stringify(obj))
       }
     }
   })

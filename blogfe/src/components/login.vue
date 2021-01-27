@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import bhead from "common/bhead";
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'login',
@@ -31,8 +31,6 @@ export default {
     }
   },
   created(){
-    // this.$http.get('/user/info').then(res=>{
-    // })
     
   },
   methods:{
@@ -41,10 +39,18 @@ export default {
         console.log(res.data)
         if(res.data.code === 200){
           this.$msg('success',res.data.msg)
+          let info = {
+            flag: true,
+            name: res.data.userName
+          }
+          this.setLoginInfo(info)
           this.$router.push('/test')
         }
       })
-    }
+    },
+    ...mapMutations('user', [
+      'setLoginInfo'
+    ])
   },
 }
 </script>

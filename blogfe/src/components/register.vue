@@ -52,7 +52,7 @@ export default {
           console.log('hhh')
           this.$router.push('/')
         }else{
-          console.log('eeeeeeee')
+          this.$msg('error',res.data.err)
         }
       })
     },
