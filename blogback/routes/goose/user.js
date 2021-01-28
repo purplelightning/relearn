@@ -113,6 +113,17 @@ router.post('/login', (req, res, next) => {
   })
 })
 
+router.get('/avatar', (req, res, next) => {
+  User.find({name: req.session.username}, (err,docs) => {
+    if(err){
+      console.log(err)
+    }else{
+      let doc = docs[0]
+      console.log(doc)
+    }
+  })
+})
+
 router.get('/logout', (req, res, next) => {
   res.writeHead(200, {
     'Content-Type': 'text/html; charset=utf-8'

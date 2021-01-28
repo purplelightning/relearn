@@ -6,6 +6,7 @@
     </div>
     <div v-show="loginFlag">
       <div class="tab">已登录：{{userName}}</div>
+      <img class="avatar" :src="imgSrc" />
     </div>
   </div>
 </template>
@@ -18,6 +19,19 @@ export default {
   name: 'bhead',
   data () {
     return {
+      imgSrc
+    }
+  },
+  created(){
+
+  },
+  watch:{
+    loginFlag(){
+      if(this.loginFlag){
+        this.$http.get('/user/avatar').then(res=>{
+          console.log(res)
+        })
+      }
     }
   },
   computed:{
