@@ -5,8 +5,15 @@
       <router-link class="tab" to="/login">登录</router-link>
     </div>
     <div v-show="loginFlag">
-      <div class="tab">已登录：{{userName}}</div>
-      <img class="avatar" :src="imgSrc" />
+      <el-tooltip class="item" effect="dark" :content="userName" placement="bottom">
+        <img class="avatar" :src="imgSrc"/>
+      </el-tooltip>
+      <label>
+        <input class="changeImg" type="file" @change="upImg"/>
+      </label>
+    </div>
+    <div>
+
     </div>
   </div>
 </template>
@@ -19,25 +26,38 @@ export default {
   name: 'bhead',
   data () {
     return {
-      imgSrc
+      imgSrc: '',
+
     }
   },
-  created(){
-
+  methods:{
+    getAvatar(){
+      this.$http.get('/user/avatar').then(res=>{
+        this.imgSrc= 'http://localhost:2080' + res.data.logoUrl
+      })
+    },
+    upImg(e){
+      let dt = e.target.files[0]
+      let data= new FormData()
+      data.append('avatar', dt)
+      this.$http.post('user/uploadAvatar', data).then(res=>{
+        if(res.data.code === 200){
+          this.getAvatar()
+        }
+      })
+    }
   },
   watch:{
     loginFlag(){
       if(this.loginFlag){
-        this.$http.get('/user/avatar').then(res=>{
-          console.log(res)
-        })
+        this.getAvatar()
       }
     }
   },
   computed:{
     ...mapState('user', [
       'loginFlag','userName'
-    ])
+    ]),
   },
   components:{
     bnav
@@ -66,6 +86,25 @@ export default {
     text-decoration: none;
     border:1px solid #ccc;
     border-radius: 5px;
+  }
+  .item{
+    cursor: pointer;
+  }
+  .avatar{
+    margin-top: 5px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+  }
+  .changeImg{
+    position: absolute;
+    right: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    opacity: 0; // 隐藏元素
+    cursor: pointer;
+    z-index: 100;
   }
 }
 </style>

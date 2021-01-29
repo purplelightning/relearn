@@ -120,8 +120,38 @@ router.get('/avatar', (req, res, next) => {
     }else{
       let doc = docs[0]
       console.log(doc)
+      let obj ={
+        logoUrl: '/avatar/' + doc.avatar
+      }
+      res.end(JSON.stringify(obj))
     }
   })
+})
+
+router.post('/uploadAvatar', avatarUpload.single('avatar'), (req, res, next) => {
+  res.writeHead(200,{
+    'Content-Type': 'text/html; charset=utf-8'
+  })
+  if(!req.file.path){
+    res.end("{'err':'头像修改失败'}")
+  }
+  console.log(req.file.path)
+  let arr = req.file.path.split('\\')
+  let newImg = arr[arr.length-1]
+  console.log(newImg)
+  User.findOneAndUpdate({name: req.session.username},{"$set": {avatar: newImg}}, {"new":true}, (err,data) =>{
+        if(err){
+          res.end("{'err':'头像修改失败'}")
+        }else{
+          let obj = {
+            code: 200,
+            msg: '头像修改成功',
+            success: true
+          }
+          res.end(JSON.stringify(obj))
+        }
+    }
+  )
 })
 
 router.get('/logout', (req, res, next) => {
