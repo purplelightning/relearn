@@ -30,6 +30,13 @@ export default {
 
     }
   },
+  created(){
+    console.log(this.userName)
+    console.log(this.imgSrc)
+    if(this.loginFlag){
+      this.getAvatar()
+    }
+  },
   methods:{
     getAvatar(){
       this.$http.get('/user/avatar').then(res=>{
