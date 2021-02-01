@@ -30,9 +30,6 @@ export default {
       }
     }
   },
-  created(){
-    
-  },
   methods:{
     login(){
       this.$http.post('/user/login', this.form).then(res => {
